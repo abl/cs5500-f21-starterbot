@@ -1,0 +1,112 @@
+plugins {
+    // Build "shadow" JARs for deployment
+    id 'com.github.johnrengelman.shadow'
+
+    // Apply the java plugin to add support for Java
+    id 'java'
+
+    // Apply the application plugin to add support for building a CLI application.
+    id 'application'
+
+    // Lombok provides shorthand for repetitive Java tasks
+    id "io.freefair.lombok"
+
+    // Spotless to format code easily
+    id "com.diffplug.spotless"
+
+    // Graal for building tiny native images
+    id "com.palantir.graal"
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+      name 'm2-dv8tion'
+      url 'https://m2.dv8tion.net/releases'
+    }
+}
+
+dependencies {
+    // log4j so JDA can log
+    implementation 'org.apache.logging.log4j:log4j-api:_'
+    implementation 'org.apache.logging.log4j:log4j-core:_'
+    implementation 'org.slf4j:slf4j-simple:_'
+
+    // sparkjava for simple HTTP serving
+    implementation "com.sparkjava:spark-core:_"
+
+    // Use JUnit Jupiter API for testing.
+    testImplementation Testing.junit.api
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly Testing.junit.engine
+
+    // Annotations such as Nullable
+    implementation 'com.google.code.findbugs:annotations:_'
+
+    // Force JRE Guava to work around issues with Truth
+    testImplementation "com.google.guava:guava:_"
+
+    // Fluent assertions for testing
+    testImplementation 'com.google.truth:truth:_'
+
+    // JDA for talking to Discord
+    implementation ('net.dv8tion:JDA:_') {
+        // Remove the next line if your bot needs voice support!
+        exclude module: "opus-java"
+    }
+}
+
+application {
+    // Define the main class for the application.
+    mainClassName = 'edu.northeastern.cs5500.starterbot.App'
+}
+
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+}
+
+// task stage(dependsOn: ['clean', 'shadowJar'])
+
+graal {
+    mainClass 'edu.northeastern.cs5500.starterbot.App'
+    outputName "starterBot"
+    javaVersion "11"
+    option "--allow-incomplete-classpath"
+}
+
+// Target Java 1.11 - make sure system.properties matches this as well
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            srcDirs 'build/generated/sources/annotationProcessor/java/main'
+        }
+    }
+    test {
+        java {
+            srcDirs 'src/test/java'
+            srcDirs 'build/generated/sources/annotationProcessor/java/test'
+        }
+    }
+}
+
+spotless {
+    format 'misc', {
+        target '**/*.gradle', '**/*.md', '**/.gitignore'
+        targetExclude 'build/**'
+
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+    java {
+        targetExclude 'build/**'
+        googleJavaFormat().aosp()
+    }
+}
