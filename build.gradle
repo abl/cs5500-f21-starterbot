@@ -13,9 +13,6 @@ plugins {
 
     // Spotless to format code easily
     id "com.diffplug.spotless"
-
-    // Graal for building tiny native images
-    id "com.palantir.graal"
 }
 
 repositories {
@@ -68,18 +65,9 @@ test {
     useJUnitPlatform()
 }
 
-// task stage(dependsOn: ['clean', 'shadowJar'])
-
-graal {
-    mainClass 'edu.northeastern.cs5500.starterbot.App'
-    outputName "starterBot"
-    javaVersion "11"
-    option "--allow-incomplete-classpath"
-}
-
-// Target Java 1.11 - make sure system.properties matches this as well
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+// Target Java 1.8 - make sure system.properties matches this as well
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 sourceSets {
     main {
