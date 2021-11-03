@@ -120,6 +120,9 @@ gradle-app.setting
 
 # End of https://www.gitignore.io/api/code,java,linux,macos,gradle,windows
 
+# Necessary to keep Dagger errors from propagating.
+!.settings/org.eclipse.jdt.core.prefs
+
 # Created by VS Code Java Extension
 .settings/
 .project
